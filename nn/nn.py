@@ -194,9 +194,9 @@ class NeuralNetwork:
 
         # Backprop depends on current activation function.
         if activation_curr == 'sigmoid':
-            dZ_curr = self._sigmoid_backprop(Z_curr)
+            dZ_curr = self._sigmoid_backprop(dA_curr, Z_curr)
         else:
-            dZ_curr = self._relu_backprop(Z_curr)
+            dZ_curr = self._relu_backprop(dA_curr, Z_curr)
         
         # Calculate all relevant derivatives.
         dA_prev = (dA_curr * dZ_curr).dot(W_curr)
@@ -310,7 +310,7 @@ class NeuralNetwork:
         per_epoch_loss_train, per_epoch_loss_val = [], []
 
         # Separate training data into mini batches by calculating from size of data.
-        num_batch = np.ceil( len(y_train), self._batch_size)
+        num_batch = np.ceil( len(y_train) / self._batch_size)
 
         # Add another empty axis if y labels is 1-Dimensional.
         if len(y_train.shape) == 1:
@@ -358,9 +358,9 @@ class NeuralNetwork:
                 grad_dict = self.backprop(y, y_hat, cache)
                 self._update_params(grad_dict)
             
-            # Append epoch loss from training and validation.
-            per_epoch_loss_train += entry_epoch_loss_train
-            per_epoch_loss_val += entry_epoch_loss_val
+            # Append mean epoch loss from training and validation.
+            per_epoch_loss_train.append( np.mean(entry_epoch_loss_train) )
+            per_epoch_loss_val.append( np.mean(entry_epoch_loss_val) )
             
             # Increment epoch.
             epoch += 1
