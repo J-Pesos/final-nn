@@ -199,9 +199,9 @@ class NeuralNetwork:
             dZ_curr = self._relu_backprop(dA_curr, Z_curr)
         
         # Calculate all relevant derivatives.
-        dA_prev = (dA_curr * dZ_curr).dot(W_curr)
-        dW_curr = (A_prev.T).dot(dA_curr * dZ_curr).T # Needs to align with dimensions of self._param_dict[Wx]
-        db_curr = np.sum( (dA_curr * dZ_curr), axis = 0).reshape(b_curr.shape) # Ensure that has same dimensions as bias.
+        dA_prev = (dZ_curr).dot(W_curr)
+        dW_curr = (A_prev.T).dot(dZ_curr).T # Needs to align with dimensions of self._param_dict[Wx]
+        db_curr = np.sum(dZ_curr, axis = 0).reshape(b_curr.shape) # Ensure that has same dimensions as bias.
 
         return dA_prev, dW_curr, db_curr
 
@@ -271,7 +271,7 @@ class NeuralNetwork:
                 Dictionary containing the gradient information from most recent round of backprop.
         """
         # Update internal parameters of network, this is how model learns.
-        for L in range(1, len(self.arch)):
+        for L in range(1, len(self.arch) + 1): # Layers start with 1, make sure to update all layers by adding 1 to length of architecture.
             # Subtract weights and bias gradient taken from the backpropagation, from the forward values, multiplied by the learning rate.
             self._param_dict[f"W{L}"] = self._param_dict[f"W{L}"] - self._lr * grad_dict[f"dW_curr{L}"]
             self._param_dict[f"b{L}"] = self._param_dict[f"b{L}"] - self._lr * grad_dict[f"db_curr{L}"]
@@ -311,11 +311,6 @@ class NeuralNetwork:
 
         # Separate training data into mini batches by calculating from size of data.
         num_batch = np.ceil( len(y_train) / self._batch_size)
-
-        # Add another empty axis if y labels is 1-Dimensional.
-        if len(y_train.shape) == 1:
-            y_train = y_train[:, np.newaxis]
-            y_val = y_val[:, np.newaxis]
 
         # Initialize first epoch.
         epoch = 1
@@ -397,6 +392,9 @@ class NeuralNetwork:
             nl_transform: ArrayLike
                 Activation function output.
         """
+        # Converting Z to float array should help with exponential function.
+        Z = Z.astype(float)
+
         return 1 / (1 + np.exp(-Z) )
 
     def _sigmoid_backprop(self, dA: ArrayLike, Z: ArrayLike):

@@ -80,8 +80,8 @@ def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
     encodings = []
 
     for seq in seq_arr:
-        # Assert that there is no character in the sequence 
-        assert len( set(seq) ) == len( set(alphabet) ), 'There is charater in the sequence that is not in the nucleotide alphabet.'
+        # Assert that there is no character in the sequence that is not a nucleotide.
+        assert len( set(seq) ) <= len( set(alphabet) ), 'There is charater in the sequence that is not in the nucleotide alphabet.'
         
         enc_seq = []
 
@@ -90,4 +90,4 @@ def one_hot_encode_seqs(seq_arr: List[str]) -> ArrayLike:
         
         encodings += [enc_seq]
 
-    return encodings
+    return np.array(encodings)
