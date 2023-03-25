@@ -7,27 +7,16 @@ from sklearn.model_selection import train_test_split
 # Set random seed for reproducibility.
 np.random.seed(15)
 
-# Create neural networks for testing.
-nn_test_class = nn.NeuralNetwork([{'input_dim': 68, 'output_dim': 34, 'activation': 'sigmoid'},
-                            {'input_dim': 34, 'output_dim': 17, 'activation': 'sigmoid'},
-                            {'input_dim': 17, 'output_dim': 1, 'activation': 'sigmoid'}
+# Create simple neural networks for testing.
+nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'sigmoid'},
+                            {'input_dim': 1, 'output_dim': 3, 'activation': 'sigmoid'}
                             ],
                             lr = 0.1,
                             seed = 15,
-                            batch_size = 10,
-                            epochs = 10,
+                            batch_size = 3,
+                            epochs = 5,
                             loss_function = 'bce'
                             )
-
-nn_test_autoenc = nn.NeuralNetwork([{'input_dim': 64, 'output_dim': 16, 'activation': 'relu'},
-                                    {'input_dim': 16, 'output_dim': 64, 'activation': 'relu'},
-                                    ],
-                                    lr = 0.1,
-                                    seed = 15,
-                                    batch_size = 10,
-                                    epochs = 10,
-                                    loss_function = 'mse'
-                                    )
 
 def test_single_forward():
     pass
@@ -48,10 +37,35 @@ def test_binary_cross_entropy_backprop():
     pass
 
 def test_mean_squared_error():
-    pass
+    '''
+    Unit test to ensure implementation calculates mean squared error correctly.
+    '''
+    # Generate y and y_hat. Manual calculation is 0.4.
+    y = np.array( [0, 1, 1, 1, 0] )
+    y_hat = np.array( [0, 1, 1, 0, 1] )
+
+    # Instantiate mse calculated by implementation.
+    mse_method = nn_test._mean_squared_error(y, y_hat)
+
+    # Assert that method mse matches manual calculation.
+    assert mse_method == 0.4
 
 def test_mean_squared_error_backprop():
-    pass
+    '''
+    Unit test to ensure implementation calculates mean squared error backprop correctly.
+    '''
+    # Generate y and y_hat.
+    y = np.array( [0, 1, 1, 1, 0] )
+    y_hat = np.array( [0, 1, 1, 0, 1] )
+
+    # Manual calculation of backprop is an array of errors depending on differences in y and y_hat.
+    mse_bprop = np.array( [ 0. ,  0. ,  0. , -0.4,  0.4] )
+
+    # Instantiate mse backprop calculated by implementation.
+    mse_bprop_method = nn_test._mean_squared_error_backprop
+
+    # Assert that method mse backprop matches manual calculation.
+    assert np.all(mse_bprop == mse_bprop_method)
 
 def test_sample_seqs():
     '''
