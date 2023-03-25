@@ -32,10 +32,10 @@ def sample_seqs(seqs: List[str], labels: List[bool]) -> Tuple[List[str], List[bo
     sampled_labels = []
 
     for seq_idx in range( len(pos_seqs) + len(neg_seqs) ):
-        # Set float that represents a value above or below 0.5 probability.
-        p = np.random.uniform()
+        # Set either a 0 or a 1 represents a 50/50 probability of sampling a positive or negative sequence.
+        p = np.random.choice([0, 1], size = 1)
         # Sample from positive sequences.
-        if p < 0.5:
+        if p == 1:
             sample = int( np.random.uniform(0, len(pos_seqs)) ) # Select random index of a positive samples.
             sampled_labels += [ labels[ pos_seqs[sample] ] ]
             sampled_seqs += [ seqs[ pos_seqs[sample] ] ]
