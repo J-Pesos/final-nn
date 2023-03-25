@@ -66,15 +66,28 @@ def test_predict():
     '''
     Unit test to ensure predictions have the same dimensions as the provided labels.
     '''
+    # Instantiate basic neural network.
+    nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'relu'}],
+                               lr = 0.1,
+                               seed = 15,
+                               batch_size = 1,
+                               epochs = 1,
+                               loss_function = 'mse'
+                               )
+    
+    # Create random training and validation sets.
     X_train = np.random.rand(75, 3)
     y_train = np.random.rand(75, 1) 
     X_test = np.random.rand(25, 3)
     y_test = np.random.rand(25, 1)
 
+    # Perform a fit.
     fit = nn_test.fit(X_train, y_train, X_test, y_test)
 
+    # Get prediction.
     pred = nn_test.predict(X_test)
 
+    # Assert that prediction has same dimenions as labels.
     assert y_test.shape == pred.shape
 
 def test_binary_cross_entropy():
