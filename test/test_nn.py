@@ -31,16 +31,44 @@ def test_predict():
     pass
 
 def test_binary_cross_entropy():
-    pass
+    '''
+    Unit test to ensure implementation calculates binary cross entropy correctly.
+    '''
+    # Generate y and y_hat. Manual calculation of bce is 7.37.
+    y = np.array( [0., 1., 1., 1., 0.] )
+    y_hat = np.array( [0., 1., 1., 0., 1.] )
+
+    # Instantiate mse calculated by implementation.
+    bce_method = nn_test._binary_cross_entropy(y, y_hat)
+
+    # Assert that method bce matches manual calculation.
+    assert round(bce_method, 2) == 7.37
 
 def test_binary_cross_entropy_backprop():
-    pass
+    '''
+    Unit test to ensure implementation calculates binary cross entropy backprop correctly.
+    '''
+    # Generate y and y_hat.
+    y = np.array( [0., 1., 1., 1., 0.] )
+    y_hat = np.array( [0., 1., 1., 0., 1.] )
+
+    # Manual calculation of backprop.
+    bce_bprop = np.array( [0.2, -0.2, -0.2, -20000000.0, 19999999.9] )
+
+    # Instantiate bce backprop calculated by implementation.
+    bce_bprop_method = nn_test._binary_cross_entropy_backprop(y, y_hat)
+
+    # Round bce_prop_method values.
+    round_bce_bprop_method = [round(i, 2) for i in bce_bprop_method]
+
+    # Assert that method mse backprop matches manual calculation.
+    assert np.all(bce_bprop == round_bce_bprop_method)
 
 def test_mean_squared_error():
     '''
     Unit test to ensure implementation calculates mean squared error correctly.
     '''
-    # Generate y and y_hat. Manual calculation is 0.4.
+    # Generate y and y_hat. Manual calculation of mse is 0.4.
     y = np.array( [0, 1, 1, 1, 0] )
     y_hat = np.array( [0, 1, 1, 0, 1] )
 

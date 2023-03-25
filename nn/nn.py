@@ -463,8 +463,8 @@ class NeuralNetwork:
                 Average loss over mini-batch.
         """
         # Adjust 0 and 1 values in y_hat to prevent NaN values.
-        y_hat[y_hat == 0] = 0.000001
-        y_hat[y_hat == 1] = 0.999999
+        y_hat[y_hat == 0] = 0.00000001
+        y_hat[y_hat == 1] = 0.99999999
 
         loss = -np.mean(y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat) )
         return loss
