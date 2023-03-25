@@ -8,21 +8,46 @@ from sklearn.model_selection import train_test_split
 np.random.seed(15)
 
 # Create simple neural networks for testing.
-nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'sigmoid'},
-                            {'input_dim': 1, 'output_dim': 3, 'activation': 'sigmoid'}
+nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'relu'},
+                            {'input_dim': 1, 'output_dim': 3, 'activation': 'relu'}
                             ],
                             lr = 0.1,
                             seed = 15,
-                            batch_size = 3,
-                            epochs = 5,
-                            loss_function = 'bce'
+                            batch_size = 1,
+                            epochs = 1,
+                            loss_function = 'mse'
                             )
 
 def test_single_forward():
-    pass
+    '''
+    Unit test to ensure implementation performs a correct single forward step.
+    '''
+    # Use own inputs and perform single forward step.
+    A_curr, Z_curr = nn_test._single_forward(np.array( [[30, 40, 30, 20]] ),
+                                             np.array( [[1]] ),
+                                             np.array( [1, 2, 3, 4] ),
+                                             'relu')
+
+    # Assert single forward equals manually calculated values.
+    assert A_curr == np.array( [[281]] )
+    assert Z_curr == np.array( [281] )
 
 def test_forward():
-    pass
+    '''
+    Unit test to ensure implementation performs successful full forward pass.
+    '''
+    # Create own inputs and assess that forward pass is calculating as expected.
+    nn_test._param_dict = {"b1": np.array([[1], [2]]),
+                           "W1": np.array([[1, 2, 3, 4], [4, 3, 2, 1]]),
+                           "b2": np.array([[1]]),
+                           "W2": np.array([[1, 4]]),
+                           }
+    
+    # Perform a forward pass.
+    y_hat, cache = nn_test.forward(np.array([1, 2, 3, 4]))
+
+    # Assert y_hat equals manually calculated value.
+    assert y_hat == np.array( [[120]] )
 
 def test_single_backprop():
     pass
@@ -48,21 +73,24 @@ def test_binary_cross_entropy_backprop():
     '''
     Unit test to ensure implementation calculates binary cross entropy backprop correctly.
     '''
-    # Generate y and y_hat.
-    y = np.array( [0., 1., 1., 1., 0.] )
-    y_hat = np.array( [0., 1., 1., 0., 1.] )
+    # Generate y and y_hat. Manual calculation is 
+    y = np.array( [0.5, 0.5, 0.4, 0.5, 0.4] )
+    y_hat = np.array( [0.4, 0.5, 0.4, 0.4, 0.4] )
 
-    # Manual calculation of backprop.
-    bce_bprop = np.array( [0.2, -0.2, -0.2, -20000000.0, 19999999.9] )
+    # Instantiate mse calculated by implementation.
+    bce_method = nn_test._binary_cross_entropy(y, y_hat)
 
-    # Instantiate bce backprop calculated by implementation.
+    # Manual calculation of backprop is an array of errors depending on differences in y and y_hat.
+    bce_bprop = np.array( [-0.08, 0.0, 0.0, -0.08, 0.0] )
+
+    # Instantiate mse backprop calculated by implementation.
     bce_bprop_method = nn_test._binary_cross_entropy_backprop(y, y_hat)
 
     # Round bce_prop_method values.
     round_bce_bprop_method = [round(i, 2) for i in bce_bprop_method]
 
     # Assert that method mse backprop matches manual calculation.
-    assert np.all(bce_bprop == round_bce_bprop_method)
+    assert np.all(bce_bprop == np.array(round_bce_bprop_method) )
 
 def test_mean_squared_error():
     '''
