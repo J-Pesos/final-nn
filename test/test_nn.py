@@ -5,8 +5,7 @@ import numpy as np
 np.random.seed(15)
 
 # Create simple neural networks for testing.
-nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'relu'},
-                            ],
+nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'relu'}],
                             lr = 0.1,
                             seed = 15,
                             batch_size = 1,
@@ -43,7 +42,7 @@ def test_forward():
     y_hat, cache = nn_test.forward(np.array([1, 2, 3, 4]))
 
     # Assert y_hat equals manually calculated value.
-    assert y_hat == np.array( [[120]] )
+    assert np.all(y_hat == np.array( [[31, 22]] ))
 
 def test_single_backprop():
     '''
