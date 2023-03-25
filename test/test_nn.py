@@ -55,7 +55,7 @@ def test_mean_squared_error_backprop():
 
 def test_sample_seqs():
     '''
-    Unit test to ensure sampling of sequences have relatively equal balancing.
+    Unit test to ensure sampling of sequences have relatively balanced classes.
     '''
     alphabet = ['A', 'T', 'C', 'G']
     seqs = []
@@ -89,4 +89,19 @@ def test_sample_seqs():
     assert abs( len(pos_labs) - len(neg_labs) ) < 50, 'Classes are not balanced after sampling.' 
 
 def test_one_hot_encode_seqs():
-    pass
+    '''
+    Unit test to ensure one_hot_encoding is encodes nucleotide sequences correctly.
+    '''
+    # Initialize sequences to encode.
+    seqs = ['ATCG',
+            'GCTA']
+
+    # Store what the actual encodings should be.
+    actual_encodings = np.array( [[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                                  [0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0]]
+                                  )
+    
+    encoded_seqs = preprocess.one_hot_encode_seqs(seqs)
+
+    # Assert that the actual encodings matches one-hot encoding.
+    assert np.all(actual_encodings == encoded_seqs), 'One-hot encoding is not outputting the expected sequence encoding.'
