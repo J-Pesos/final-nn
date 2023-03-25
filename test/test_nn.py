@@ -59,10 +59,10 @@ def test_mean_squared_error_backprop():
     y_hat = np.array( [0, 1, 1, 0, 1] )
 
     # Manual calculation of backprop is an array of errors depending on differences in y and y_hat.
-    mse_bprop = np.array( [ 0. ,  0. ,  0. , -0.4,  0.4] )
+    mse_bprop = np.array( [ 0.,  0.,  0., -0.4,  0.4] )
 
     # Instantiate mse backprop calculated by implementation.
-    mse_bprop_method = nn_test._mean_squared_error_backprop
+    mse_bprop_method = nn_test._mean_squared_error_backprop(y, y_hat)
 
     # Assert that method mse backprop matches manual calculation.
     assert np.all(mse_bprop == mse_bprop_method)
