@@ -1,15 +1,11 @@
-from nn import nn, preprocess, io
+from nn import nn, preprocess
 import numpy as np
-import pytest
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
 
 # Set random seed for reproducibility.
 np.random.seed(15)
 
 # Create simple neural networks for testing.
 nn_test = nn.NeuralNetwork([{'input_dim': 3, 'output_dim': 1, 'activation': 'relu'},
-                            {'input_dim': 1, 'output_dim': 3, 'activation': 'relu'}
                             ],
                             lr = 0.1,
                             seed = 15,
@@ -50,10 +46,37 @@ def test_forward():
     assert y_hat == np.array( [[120]] )
 
 def test_single_backprop():
-    pass
+    '''
+    Unit test to ensure implementation performs a correct backprop step.
+    '''
+    # Use own inputs and perform single backprop step.
+    dA_prev, dW_curr, db_curr = nn_test._single_backprop(np.array([[20, 30, 40, 20]]),
+                                                        np.array([[1]]),
+                                                        np.array([[1]]),
+                                                        np.array([[1, 2, 3, 4]]),
+                                                        np.array([[5]]),
+                                                        "relu"
+                                                        )
+
+    # Assert single backprop step equals mannually calculated values.
+    assert np.array_equal(dA_prev, np.array([[100, 150, 200, 100]]))
+    assert np.array_equal(dW_curr, np.array([[5, 10, 15, 20]]))
+    assert np.array_equal(db_curr, np.array([[5]]))
 
 def test_predict():
-    pass
+    '''
+    Unit test to ensure predictions have the same dimensions as the provided labels.
+    '''
+    X_train = np.random.rand(75, 3)
+    y_train = np.random.rand(75, 1) 
+    X_test = np.random.rand(25, 3)
+    y_test = np.random.rand(25, 1)
+
+    fit = nn_test.fit(X_train, y_train, X_test, y_test)
+
+    pred = nn_test.predict(X_test)
+
+    assert y_test.shape == pred.shape
 
 def test_binary_cross_entropy():
     '''
@@ -73,12 +96,9 @@ def test_binary_cross_entropy_backprop():
     '''
     Unit test to ensure implementation calculates binary cross entropy backprop correctly.
     '''
-    # Generate y and y_hat. Manual calculation is 
+    # Generate y and y_hat.
     y = np.array( [0.5, 0.5, 0.4, 0.5, 0.4] )
     y_hat = np.array( [0.4, 0.5, 0.4, 0.4, 0.4] )
-
-    # Instantiate mse calculated by implementation.
-    bce_method = nn_test._binary_cross_entropy(y, y_hat)
 
     # Manual calculation of backprop is an array of errors depending on differences in y and y_hat.
     bce_bprop = np.array( [-0.08, 0.0, 0.0, -0.08, 0.0] )
